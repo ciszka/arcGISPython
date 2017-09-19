@@ -1,0 +1,12 @@
+#import arc.py and associated pacakges
+#it needs to be initialized
+#I will need a table to base the repetition off of
+  #This table needs to have something that can be used as a name
+#This requires a mapdocument to already exist
+  #Make sure that the mapdocument beginning nad it's source isn't too long as arc.py does not like long file names
+#I'll need some sort of for or while loop to cycle through the table
+  #It will need to pan to (given a particular map document)
+  #then save that with a new extension
+#Keep doing that until there is nothing left in the table
+#Annouce that you have finished
+  
