@@ -18,54 +18,71 @@
 #But each map document is zoomed in at a particular distance for each site
 #In the Table
 
-import os.path
-import arcpy
-from arcpy import env
-arcpy.AddWarning("Addd me some modulessss")
-
 try:
+    import os.path
+    import arcpy
+    from arcpy import env
+    arcpy.AddWarning("Addd me some modulessss")
+
     #set environment
     #env.workspace = "H:\\Current\\"
-    env.workspace = "H:\\DissertationResearch\\PreliminaryResearch\\SAA_2015\\SAA_2015\\ChildrensHomes_SAA_2015.gdb\\\\"
+#    env.workspace = "H:\\DissertationResearch\\PreliminaryResearch\\SAA_2015\\SAA_2015\\ChildrensHomes_SAA_2015.gdb\\\\"
+    env.workspace = "H:\\CensusData.gdb\\\\"
+    env.overwriteOutput = True
+    workName = "H:\\CensusData.gdb\\\\"
+
     arcpy.AddWarning("I set the workspace")
     print "I set the workspace"
 
-    #Create a variable with the name of the subject feature class (aka what fucking shapefile do you want to look at within the geodatabase
-    searchlayer = "ChildrensHomes"
     siteList = [] #made an empy array for the sites
-    print "I set some stuff"
 
+    field = "NHGISNAM"
+    #Create a variable with the name of the subject feature class (aka what fucking shapefile do you want to look at within the geodatabase
+    layer = "County1860_studyArea"
     #Set up a cursor to iterate through the selected site
-    siteCursor = arcpy.da.SearchCursor(searchlayer, ["Name"])
+    intable = workName + layer
+    print intable
+    siteCursor = arcpy.da.SearchCursor(layer, [field])
     print "I created the cursor"
+    temptable = arcpy.MakeFeatureLayer_management(workName + layer, "temp_Lyr")
+    print "I made the feature layer"
+
+    arcpy.MakeTableView_management(inTable, "fire_view", "", "", fieldinfo)
+    arcpy.AddWarning("made the table view")
 
     for row in siteCursor:
-        site = row[0]
-        if site not in siteList:
-            siteList.append(site)
-            arcpy.AddWarning(site)
-    print "I ran through one cursor"
+        siteName = row[0]
+        if siteList not in siteList:
+            siteList.append(siteName)
+            arcpy.AddWarning(siteName)
+    print "I made a list of sites"
 
-    for place in siteList:
-        siteQuery = '"site" = \'' + place + '\'' #I'm setting the SQL query that I'm going to use to find the particular site I"m searching for
+    for site in siteList:
+        print site
+        #siteQuery =  field + ' = \'' + site + '\''
+        print siteQuery
         arcpy.AddWarning(siteQuery) #I'm adding a warning that is just the entry of the sitequery
-        arcpy.AddWarning("Selected by attribute") #I'm selecting somethinb by attribute AKA the sitename
-        nametemp = name.replace(" ",  "_") #creating a temporary name for some reason
-        newMapdDocName = "H:\\Current\\" + place + ".mdx\\"
-        arcpy.AddWarning("newdocName")
-        arcpy.AddWarning("You are making a document of the" + place + ".")
-        df = arcpy.mapping.ListDataFrames(mxd, "Layers")[0]#what are the dataframes in the document I'm looking at
-        panToLoc=arcpy.mapping.ListLayers(mxd, "Sites", df)[0] #What are the layers within that data frame
+        #I need to actually select the thing by attribute
+        arcpy.SelectLayerByAttribute_management("tmp_Lyr", "NEW_SELECTION", "ICPSRST = 73")
+        print "I selected the thing"
+        #arcpy.AddWarning("Selected by attribute") #I'm selecting somethinb by attribute AKA the sitename
+        #nametemp = site.replace(" ",  "_") #creating a temporary name for some reason
+        #newMapDocName = "H:\\Current\\" + nametemp + ".mdx\\"
+        #print NewMapDocName
+#        arcpy.AddWarning("newdocName")
+
+    #    arcpy.AddWarning("You are making a document of the" + place + ".")
+        #df = arcpy.mapping.ListDataFrames(mxd, "Layers")[0]#what are the dataframes in the document I'm looking at
+        #panToLoc=arcpy.mapping.ListLayers(mxd, "Sites", df)[0] #What are the layers within that data frame
         #within that layer; I want to select an object
         #Then I want to pan to THAT object within the dataframe
-        extent = arcpy.SelectLayerByAttribute_management("site_List", "NEW_SELECTION", siteQuery) #I'm selecting the site by the attribute, I'm telling it which layer to look in and then saying it's a new selection and then passing it the
-        df.panToExtent(place.getSelectedExtent(extent))
-        location.extent = panToLoc.getExtent(True)
-
+        #extent = arcpy.SelectLayerByAttribute_management("site_List", "NEW_SELECTION", siteQuery) #I'm selecting the site by the attribute, I'm telling it which layer to look in and then saying it's a new selection and then passing it the
+        #df.panToExtent(place.getSelectedExtent(extent))
+        #location.extent = panToLoc.getExtent(True)
+        #arcpy.RefreshActiveView()
+#        mxd = arcpy.mapping.MapDocument(newMapDocName)
         #Still Need the save a map document bit
-        arcpy.RefreshActiveView()
-        mxd = arcpy.mapping.MapDocument("C:\\GIS\\Untitled.mxd")
-        arcpy.AddWarning("A new Map Document called" + newMapdDocName + " was created .")
+        #arcpy.AddWarning("A new Map Document called" + newMapdDocName + " was created .")
 
 except:
     arcpy.AddWarning("I failed, sorry....go take a break")
